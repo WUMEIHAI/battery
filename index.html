@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>用电量与电费计算器</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+      padding: 40px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      animation: fadeIn 0.6s ease;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      font-weight: 500;
+    }
+    /* 输入框和下拉框横向排列 */
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    input, select {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    input:focus, select:focus {
+      border-color: #4CAF50;
+      box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .result {
+      margin-top: 20px;
+      padding: 18px;
+      background: #f0f8ff;
+      border-radius: 10px;
+      font-size: 18px;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s ease;
+    }
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>⚡用电量与电费计算器</h2>
+
+    <!-- 功率输入：数值 + 单位下拉框 -->
+    <label for="power">电器功率：</label>
+    <div class="input-row">
+      <input type="number" id="power" placeholder="请输入功率值">
+      <select id="powerUnit">
+        <option value="W">瓦(W)</option>
+        <option value="kW">千瓦(kW)</option>
+      </select>
+    </div>
+
+    <!-- 每天使用时长 + 计算时间（同一行） -->
+    <label>每天使用时长（小时） / 计算天数：</label>
+    <div class="input-row">
+      <input type="number" id="hours" placeholder="例如：24">
+      <select id="timePeriod">
+        <option value="1">一天</option>
+        <option value="30">一个月 (30天)</option>
+        <option value="365">一年 (365天)</option>
+      </select>
+    </div>
+
+    <!-- 电价输入 -->
+    <label for="price">电费单价（元/度）：</label>
+    <input type="number" id="price" value="1.2" step="0.01">
+
+    <!-- 计算按钮 -->
+    <button onclick="calculate()">开始计算</button>
+
+    <!-- 结果显示 -->
+    <div class="result" id="result">
+      结果将在这里显示
+    </div>
+  </div>
+
+  <script>
+    // 数字格式化：>=1 保留 2 位；<1 保留 4 位
+    function formatNumber(num) {
+      return num >= 1 ? num.toFixed(2) : num.toFixed(4);
+    }
+
+    function calculate() {
+      let power = parseFloat(document.getElementById('power').value);
+      let unit = document.getElementById('powerUnit').value;
+      let hours = parseFloat(document.getElementById('hours').value);
+      let days = parseInt(document.getElementById('timePeriod').value);
+      let price = parseFloat(document.getElementById('price').value);
+
+      let resultBox = document.getElementById('result');
+
+      // 输入校验
+      if (isNaN(power) || isNaN(hours) || isNaN(price)) {
+        resultBox.innerHTML = "⚠️ 请输入完整的数值！";
+        resultBox.classList.add("show");
+        return;
+      }
+      if (hours < 0 || hours > 24) {
+        resultBox.innerHTML = "⚠️ 每天使用时长必须在 0 - 24 小时之间！";
+        resultBox.classList.add("show");
+        return;
+      }
+      if (power <= 0) {
+        resultBox.innerHTML = "⚠️ 功率必须大于 0！";
+        resultBox.classList.add("show");
+        return;
+      }
+
+      // 单位换算：瓦转千瓦
+      if (unit === "W") {
+        power /= 1000;
+      }
+
+      // 用电量 = 功率(千瓦) × 小时 × 天数
+      let consumption = power * hours * days;
+      let cost = consumption * price;
+
+      resultBox.innerHTML = `
+        📊 用电量：<b>${formatNumber(consumption)}</b> 度电<br>
+        💰 电费：<b>${formatNumber(cost)}</b> 元
+      `;
+      resultBox.classList.add("show");
+    }
+  </script>
+</body>
+</html>
