@@ -1,175 +1,331 @@
 <!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <title>用电量与电费计算器</title>
+<html lang="zh-CN" data-page-node-id="HopD6B2qWhelmm7IxWhIWT">
+<head data-page-node-id="AGCBSPcwPKiKpQbJT4QKqM">
+  <meta charset="UTF-8" data-page-node-id="imaNkxINqVTG3DyXG8td0w">
+  <meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="Qu9L4zhpZyrmHwzoAHmUOF">
+  <title>用电量与电费计算器 - 在线计算电器耗电量与电费</title>
+  <meta name="description" content="输入电器功率、每天使用时长和电价，一键计算日/月/年用电量（度）与电费。支持瓦与千瓦单位换算，结果精确到分。" data-page-node-id="wtZBdPUkDJAPv2AGJ01hgS">
+  <link rel="canonical" href="https://example.com/electricity-calculator" data-page-node-id="FABO4kcScGjxPcECvyvPny">
+  <meta name="theme-color" content="#2E7D32" data-page-node-id="IIGXX5rd0QkNdqmmhe4mWK">
+
+  <meta property="og:type" content="website" data-page-node-id="G5X0fKo5YlRybb4pdqdATS">
+  <meta property="og:title" content="用电量与电费计算器" data-page-node-id="G0gPLqQp8tu6KFH6DfMJCk">
+  <meta property="og:description" content="输入电器功率、使用时长和电价，一键算出用电量与电费，支持瓦/千瓦换算。" data-page-node-id="Fo0wbTDFHCox95XKcS89xe">
+  <meta property="og:image" content="https://example.com/og-cover.png" data-page-node-id="yLlam13iXWzcew3dSY91aX">
+  <meta property="og:image:width" content="1200" data-page-node-id="lLy4pKF1hsqb3MfpiBAzYJ">
+  <meta property="og:image:height" content="630" data-page-node-id="T7CPHX6xKslfEATjNOAT9E">
+  <meta property="og:locale" content="zh_CN" data-page-node-id="g1KqD06mkQIoKPDXqnBuUG">
+  <meta name="twitter:card" content="summary_large_image" data-page-node-id="dYzPnmCriMPFptRR1xCLhm">
+
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #e1bee7);
-      padding: 40px;
+    :root {
+      --primary: #2E7D32;
+      --primary-hover: #256528;
+      --focus-ring: #2E7D32;
+      --text-main: #333;
+      --text-muted: #5f6368;
+      --border: #ccc;
+      --surface: #fff;
+      --result-bg: #f0f8ff;
+      --error-bg: #fdecea;
+      --error-text: #a32d2d;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
     }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: clamp(16px, 5vw, 40px);
+      font-family: "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
     .container {
       max-width: 500px;
       margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-      animation: fadeIn 0.6s ease;
+      background: var(--surface);
+      padding: clamp(20px, 4vw, 30px);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     }
-    h2 {
+
+    h1 {
       text-align: center;
-      margin-bottom: 25px;
-      color: #333;
+      margin: 0 0 25px;
+      font-size: clamp(20px, 5vw, 24px);
+      font-weight: 500;
+      color: var(--text-main);
     }
+
+    .field { margin-bottom: 16px; }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 12px;
+    }
+    .field-row .field { margin-bottom: 16px; }
+
     label {
       display: block;
-      margin: 15px 0 8px;
+      margin-bottom: 8px;
       font-weight: 500;
-    }
-    /* 输入框和下拉框横向排列 */
-    .input-row {
-      display: flex;
-      gap: 10px;
-    }
-    input, select {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
       font-size: 15px;
-      transition: all 0.3s ease;
     }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--surface);
+      color: inherit;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus-visible,
+    select:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
     input:focus, select:focus {
-      border-color: #4CAF50;
-      box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
-      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 6px rgba(46, 125, 50, 0.3);
     }
+
     button {
       width: 100%;
       padding: 12px;
-      margin-top: 20px;
+      margin-top: 4px;
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       font-size: 16px;
       font-weight: bold;
-      background: #4CAF50;
-      color: white;
+      font-family: inherit;
+      background: var(--primary);
+      color: #fff;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     }
     button:hover {
-      background: #45a049;
+      background: var(--primary-hover);
       transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
+    button:active { transform: translateY(0); }
+
+    .error {
+      margin: 16px 0 0;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: var(--error-bg);
+      color: var(--error-text);
+      font-size: 15px;
+    }
+    .error:empty { margin: 0; padding: 0; }
+
     .result {
+      min-height: 92px;
       margin-top: 20px;
       padding: 18px;
-      background: #f0f8ff;
+      background: var(--result-bg);
       border-radius: 10px;
       font-size: 18px;
       line-height: 1.6;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.4s ease;
     }
-    .result.show {
-      opacity: 1;
-      transform: translateY(0);
+    .result .placeholder {
+      margin: 0;
+      font-size: 15px;
+      color: var(--text-muted);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .result-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin: 0 0 6px;
+    }
+    .result-line:last-child { margin-bottom: 0; }
+    .result-value { font-weight: 500; white-space: nowrap; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 420px) {
+      .field-row { grid-template-columns: 1fr; gap: 0; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .container { animation: fadeIn 0.6s ease; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+      button:hover { transform: none; }
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h2>⚡用电量与电费计算器</h2>
+<body data-page-node-id="UDfFFQtToMpkVJ0tG5eeQk">
+  <main class="container" data-page-node-id="8TBLFJGi5UQtf87UDtDHIC">
+    <h1 data-page-node-id="vDD63r0KiGr4SoEOMGSeTx">⚡ 用电量与电费计算器</h1>
 
-    <!-- 功率输入：数值 + 单位下拉框 -->
-    <label for="power">电器功率：</label>
-    <div class="input-row">
-      <input type="number" id="power" placeholder="请输入功率值">
-      <select id="powerUnit">
-        <option value="W">瓦(W)</option>
-        <option value="kW">千瓦(kW)</option>
-      </select>
+    <form id="calcForm" novalidate data-page-node-id="U4NcA7eBD7sNQFTzPGFHAB">
+      <div class="field-row" data-page-node-id="Psr5IyCvkiiFXMKtM1DO44">
+        <div class="field" data-page-node-id="idyJHfJlOMO98iWACiH2sQ">
+          <label for="power" data-page-node-id="PpJxuVFSvWl85AfzC1dHGh">电器功率</label>
+          <input type="number" id="power" name="power"
+                 min="0" step="any" inputmode="decimal"
+                 autocomplete="off" placeholder="例如：1500" data-page-node-id="un5ACaxiupzZ8HYBNDTQXm">
+        </div>
+        <div class="field" data-page-node-id="e8sdXHj8rBEtSD7Lz7coES">
+          <label for="powerUnit" data-page-node-id="FvAtJohTgGq6ZVUFLTS7WF">功率单位</label>
+          <select id="powerUnit" name="powerUnit" data-page-node-id="EaCsWE5ZaU09LfiF6Zufpj">
+            <option value="W" data-page-node-id="KDAeOowtWVboqzXfKnHc0y">瓦 (W)</option>
+            <option value="kW" data-page-node-id="ZDihWwBHEuTdR5KpMUYxDY">千瓦 (kW)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row" data-page-node-id="VqID1bUWRA4AmkH1uYxgjV">
+        <div class="field" data-page-node-id="C6NcYOQ55e3wxj4CpI96AG">
+          <label for="hours" data-page-node-id="4NnoijNzEt0Pqp4dypGHo6">每天使用时长（小时）</label>
+          <input type="number" id="hours" name="hours"
+                 min="0" max="24" step="any" inputmode="decimal"
+                 autocomplete="off" placeholder="例如：24" data-page-node-id="42jqKzYiqJ5rYPNhcsr1BQ">
+        </div>
+        <div class="field" data-page-node-id="znavi9CJSBvOiznnNtGOHC">
+          <label for="timePeriod" data-page-node-id="zJjZbB5LEYzc8cipLr5gEU">计算周期</label>
+          <select id="timePeriod" name="timePeriod" data-page-node-id="41HCcZqbHdk34y0lRvvGga">
+            <option value="1" data-page-node-id="q64Q98F7Yo7N8muYhh6oSq">一天</option>
+            <option value="30" data-page-node-id="sg5C7wJL6SjB8LQo3upDR6">一个月（30 天）</option>
+            <option value="365" data-page-node-id="KxHSwDVyTVOUgtjyLrRCf8">一年（365 天）</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" data-page-node-id="I9DGsKaGGnCpSapdOwWg14">
+        <label for="price" data-page-node-id="SuxK0pPT5vlTeSegNzrbBa">电费单价（元/度）</label>
+        <input type="number" id="price" name="price"
+               min="0" step="0.01" inputmode="decimal"
+               autocomplete="off" value="1.2" data-page-node-id="IYtTXq2pc3WUW19xvZuBCj">
+      </div>
+
+      <button type="submit" data-page-node-id="cNEGLy9VGjjRbfnGlU1mdV">开始计算</button>
+    </form>
+
+    <p class="error" id="errorMsg" role="alert" data-page-node-id="WtW4Vb58Xe2bhnM8Tn6we7"></p>
+
+    <div class="result" id="result" role="status" aria-live="polite" aria-atomic="true" data-page-node-id="Quqb1zGid4I10GW8ZF36BH">
+      <p class="placeholder" data-page-node-id="zrJrPF6D4BO9An4TfU2y9f">填写上方信息后，点击「开始计算」</p>
     </div>
-
-    <!-- 每天使用时长 + 计算时间（同一行） -->
-    <label>每天使用时长（小时） / 计算天数：</label>
-    <div class="input-row">
-      <input type="number" id="hours" placeholder="例如：24">
-      <select id="timePeriod">
-        <option value="1">一天</option>
-        <option value="30">一个月 (30天)</option>
-        <option value="365">一年 (365天)</option>
-      </select>
-    </div>
-
-    <!-- 电价输入 -->
-    <label for="price">电费单价（元/度）：</label>
-    <input type="number" id="price" value="1.2" step="0.01">
-
-    <!-- 计算按钮 -->
-    <button onclick="calculate()">开始计算</button>
-
-    <!-- 结果显示 -->
-    <div class="result" id="result">
-      结果将在这里显示
-    </div>
-  </div>
+  </main>
 
   <script>
-    // 数字格式化：>=1 保留 2 位；<1 保留 4 位
+    'use strict';
+
+    const form      = document.getElementById('calcForm');
+    const resultBox = document.getElementById('result');
+    const errorBox  = document.getElementById('errorMsg');
+
     function formatNumber(num) {
-      return num >= 1 ? num.toFixed(2) : num.toFixed(4);
+      if (!Number.isFinite(num)) return '—';
+      return Math.abs(num) >= 1 ? num.toFixed(2) : num.toFixed(4);
+    }
+
+    function showError(message) {
+      errorBox.textContent = message;
+      resultBox.replaceChildren(makePlaceholder());
+    }
+
+    function makePlaceholder() {
+      const p = document.createElement('p');
+      p.className = 'placeholder';
+      p.textContent = '填写上方信息后，点击「开始计算」';
+      return p;
+    }
+
+    function makeLine(icon, label, value) {
+      const line = document.createElement('p');
+      line.className = 'result-line';
+
+      const name = document.createElement('span');
+      const ico = document.createElement('span');
+      ico.textContent = icon + ' ';
+      ico.setAttribute('aria-hidden', 'true');
+      name.append(ico, document.createTextNode(label));
+
+      const val = document.createElement('strong');
+      val.className = 'result-value';
+      val.textContent = value;
+
+      line.append(name, val);
+      return line;
     }
 
     function calculate() {
-      let power = parseFloat(document.getElementById('power').value);
-      let unit = document.getElementById('powerUnit').value;
-      let hours = parseFloat(document.getElementById('hours').value);
-      let days = parseInt(document.getElementById('timePeriod').value);
-      let price = parseFloat(document.getElementById('price').value);
+      const power      = parseFloat(document.getElementById('power').value);
+      const unit       = document.getElementById('powerUnit').value;
+      const hours      = parseFloat(document.getElementById('hours').value);
+      const days       = parseInt(document.getElementById('timePeriod').value, 10);
+      const price      = parseFloat(document.getElementById('price').value);
 
-      let resultBox = document.getElementById('result');
-
-      // 输入校验
-      if (isNaN(power) || isNaN(hours) || isNaN(price)) {
-        resultBox.innerHTML = "⚠️ 请输入完整的数值！";
-        resultBox.classList.add("show");
-        return;
-      }
-      if (hours < 0 || hours > 24) {
-        resultBox.innerHTML = "⚠️ 每天使用时长必须在 0 - 24 小时之间！";
-        resultBox.classList.add("show");
+      const values = [power, hours, price, days];
+      if (values.some(v => !Number.isFinite(v))) {
+        showError('⚠️ 请输入完整的数值！');
         return;
       }
       if (power <= 0) {
-        resultBox.innerHTML = "⚠️ 功率必须大于 0！";
-        resultBox.classList.add("show");
+        showError('⚠️ 功率必须大于 0！');
+        return;
+      }
+      if (hours < 0 || hours > 24) {
+        showError('⚠️ 每天使用时长必须在 0 - 24 小时之间！');
+        return;
+      }
+      if (price < 0) {
+        showError('⚠️ 电价不能为负数！');
         return;
       }
 
-      // 单位换算：瓦转千瓦
-      if (unit === "W") {
-        power /= 1000;
-      }
+      const kilowatts   = unit === 'W' ? power / 1000 : power;
+      const consumption = kilowatts * hours * days;
 
-      // 用电量 = 功率(千瓦) × 小时 × 天数
-      let consumption = power * hours * days;
-      let cost = consumption * price;
+      const priceCents = Math.round(price * 100);
+      const costCents  = Math.round(consumption * priceCents);
+      const cost       = costCents / 100;
 
-      resultBox.innerHTML = `
-        📊 用电量：<b>${formatNumber(consumption)}</b> 度电<br>
-        💰 电费：<b>${formatNumber(cost)}</b> 元
-      `;
-      resultBox.classList.add("show");
+      errorBox.textContent = '';
+      resultBox.replaceChildren(
+        makeLine('📊', '用电量', formatNumber(consumption) + ' 度电'),
+        makeLine('💰', '电费', '¥' + formatNumber(cost) + ' 元')
+      );
     }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      calculate();
+    });
   </script>
 </body>
 </html>
