@@ -79,7 +79,7 @@
 
 ```bash
 # Python 3
-cd D:\WorkBuddy\battery
+cd D:\battery
 python -m http.server 8000
 # 然后访问 http://localhost:8000
 
